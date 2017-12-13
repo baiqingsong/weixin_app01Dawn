@@ -27,10 +27,10 @@
     OBJECT参数说明：
     
     参数/类型/必填/说明  
-    url/String/是/需要跳转的应用内页面的路径 
-    success/Function/否/接口调用成功的回调函数 
-    fail/Function/否/接口调用失败的回调函数 
-    complete/Function/否/接口调用结束的回调函数（调用成功、失败都会执行）
+    url/String/是/需要跳转的应用内页面的路径  
+    success/Function/否/接口调用成功的回调函数  
+    fail/Function/否/接口调用失败的回调函数  
+    complete/Function/否/接口调用结束的回调函数（调用成功、失败都会执行） 
 
 3. wx.navigateBack(OBJECT)  
 
