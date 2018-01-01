@@ -2,11 +2,18 @@
 
 * [页面跳转](#页面跳转)
 * [banner的显示](#banner的显示)
-* [多个图片横向排列](#多个图片横向排列)
+* [多个图片横向排列多行](#多个图片横向排列多行)
 * [列表显示](#列表显示)
 * [下拉列表](#下拉列表)
 * [查询框](#查询框)
 * [评星控件](#评星控件)
+* [分类中的列表显示](#分类中的列表显示)
+* [下方弹出选择框](#下方弹出选择框)
+* [起始页闪屏](#起始页闪屏)
+* [侧边栏](#侧边栏)
+* [抽奖](#抽奖)
+* [多张图片横向排列单行](#多张图片横向排列单行)
+
 
 ## 页面跳转
 三种页面跳转的方法  
@@ -66,7 +73,7 @@ wxss中
 }
 ```
 
-## 多个图片横向排列
+## 多个图片横向排列多行
 多个图片菜单类选项
 wxml中
 ```
@@ -713,4 +720,786 @@ star.wxss中
       height: 27rpx;
       margin-right: 4rpx;
 }
+```
+
+## 分类中的列表显示
+wxml中
+```
+    <view class="select-item">
+      <view class="select-title">大家都在搜</view>
+      <view class="select-iconList one-iconList">
+        <navigator class="select-iconitem" wx:for="{{searchNameArr.searchOne}}" data-id="{{item.id}}" url="/pages/searchList/searchList?keywordsId={{item.id}}" hover-class="navigator-hover">{{item.keywords}}</navigator>
+      </view>
+    </view>
+```
+wxss中
+```
+.select-item{
+  width:100%;
+}
+.select-title{
+  width:100%;
+  text-align: center;
+  padding:20rpx 0;
+}
+.select-iconList{
+  width:100%;
+  height:210rpx;
+  text-align: center;
+  overflow: hidden;
+}
+.select-iconitem{
+  margin:14rpx;
+  /* margin-bottom:20rpx; */
+  padding:0 30rpx;
+  height:70rpx;
+  line-height: 70rpx;
+  box-sizing: border-box;
+  border-radius: 70rpx;
+  color:#7ac873;
+  border: 1px solid #7ac873;
+  display:inline-block;
+}
+
+.one-iconList navigator{
+  color:#7ac873;
+   border: 1px solid #7ac873;
+}
+```
+js中
+```
+    searchNameArr:
+        {
+            searchOne:[
+                {
+                    id:1,
+                    keywords:'年夜饭'
+                },
+                {
+                    id: 1,
+                    keywords: '热门菜谱榜'
+                },
+                {
+                    id: 1,
+                    keywords: '汤'
+                },
+                {
+                    id: 1,
+                    keywords: '蛋糕'
+                },
+                {
+                    id: 1,
+                    keywords: '早餐'
+                },
+                {
+                    id: 1,
+                    keywords: '豆腐'
+                }
+            ]
+        }
+```
+
+## 下方弹出选择框
+wxml中
+```
+    <view class="userdata">
+      <view class="userdata-name">星座</view>
+      <view class="userdata-symbol"></view>
+      <picker mode="selector" class="userdata-input" range="{{actionConItems}}" value="{{conIndex}}" bindchange="pickerConSelected">
+           <text>{{actionConItems[conIndex]}}</text>
+      </picker>
+      <text class="righthead"></text>
+    </view>
+```
+wxss中
+```
+.userdata {
+  margin: 10rpx 0rpx;
+  border: 1rpx solid #6c6c6c;
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  border-radius: 10rpx;
+  align-items: center;
+
+}
+.userdata-name {
+  padding: 30rpx 30rpx;
+}
+/*第一个箭头*/
+.userdata-symbol:after {
+  content: "";
+  display: inline-block;
+  width: 40rpx;
+  height: 40rpx;
+  margin: 15rpx 0rpx 10rpx 0rpx;
+  border-left: 1rpx solid #6c6c6c;
+}
+/*后面三个箭头*/
+.userdata-input {
+  width: 300rpx;
+}
+
+.righthead:after {
+  content: '';
+  /*即不把兄弟挤下去 又能设置自己的style  inline不能设置大小 block会挤下去 所以有了inline-block*/
+  display: inline-block;
+  width: 18rpx;
+  height: 18rpx;
+  border: 3rpx solid #A9A9A9;
+  border-bottom: none;
+  border-left: none;
+  transform: rotate(45deg);
+  margin-left: 160rpx;
+}
+```
+js中
+```
+  data:{
+    actionConItems: ['白羊座', '金牛座', '双子座', '巨蟹座', '狮子座', '处女座', '天秤座', '天蝎座', '射手座', '摩羯座', '水瓶座', '双鱼座'],
+    conIndex: 0,
+  },
+  //星座弹出窗口  可以将数据放在本地setStorage
+  pickerConSelected: function (e) {
+    console.log('picker发送选择改变，星座为' + e.detail.value);
+    wx.setStorageSync("con", e.detail.value);
+    this.setData({
+      conIndex: e.detail.value,
+      btnColor: "#ffc324",
+    });
+  },
+  onLoad: function (options) {
+    //这里是本地的信息获取
+    if (wx.getStorageSync("con") !== '') {
+      this.setData({
+        conIndex: wx.getStorageSync("con")
+      })
+    }
+  }
+```
+
+## 起始页闪屏
+wxml中
+```
+<view class="logo">
+  <image bindtap="bindLogoTap" class="logo_page" src="/images/logo.jpg" mode="widthFix"></image>
+</view>
+```
+wxss中
+```
+.logo_page {
+    width: 100%;
+    height:100vh;
+}
+```
+js中
+```
+Page({
+  data: {
+    time: 2,
+    jump:false
+  },
+
+  bindLogoTap: function () {
+    wx.switchTab ({
+      url: '../index/index'
+    });
+    this.setData({jump:true})
+  },
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+    // 设置初始计时秒数
+    let time = 2;
+    // 开始定时器
+    this.timer = setInterval(() => {
+      this.setData({
+        time: --time
+      });
+      // 读完秒后携带洗衣机编号跳转到计费页
+      if (time < 0) {
+        clearInterval(this.timer)
+        if (!this.data.jump) {
+          wx.switchTab({
+            url: '../index/index'
+          })
+        }
+      }
+    }, 1000)
+  }
+})
+```
+需要注意的是跳转的如果是正常页面可以redirectTo方法，但是如果跳转的是tabBar，则需要调用switchTab方法  
+
+## 侧边栏
+wxml中
+```
+<view class="page-bottom {{showPageBottom?'active':''}}">
+</view>
+<view class="img-content {{showPageBottom?'active':''}}">
+  <image bindtap="showMenu" src="../../images/btn.png"></image>
+</view>
+```
+wxss中
+```
+.page-bottom {
+    height: 100%;
+    width: 500rpx;
+    position: fixed; 
+    background-color: white;
+    z-index: 9999;  
+    transform: translateX(-100%);
+    transition: transform .5s;
+    /*设置元素的堆叠顺序,拥有更高堆叠顺序的元素总是会处于堆叠顺序较低的元素的前面，
+    元素可拥有负的 z-index 属性值。Z-index 仅能在定位元素上奏效如position:absolute;*/
+}
+.page-bottom.active {
+    transform: translateX(0%);
+}
+.img-content {
+    position: absolute; 
+    width: 100%;
+    padding-top: 0rpx;
+    transition: all .5s; 
+    transform: translateX(0%);
+}
+
+.img-content.active {
+    transform: translateX(65%);
+}
+```
+js中
+```
+    data: {
+        showPageBottom: false
+    },
+
+    
+    showMenu: function() {
+        this.setData({
+            showPageBottom: !this.data.showPageBottom
+        })
+    }
+```
+
+## 抽奖
+wxml中
+```
+		<view class="canvas-container">
+			<view  animation="{{animationData}}" class="canvas-content" >
+				<canvas style="width: 300px; height: 300px;" class="canvas-element" canvas-id="lotteryCanvas"></canvas>
+
+				<view class="canvas-line">
+					<view class="canvas-litem" wx:for="{{awardsList}}" wx:key="unique" style="-webkit-transform: rotate({{item.lineTurn}});transform: rotate({{item.lineTurn}})"></view>
+				</view>
+
+				<view class="canvas-list">
+					<view class="canvas-item" wx:for="{{awardsList}}" wx:key="unique">
+				  		<view class="canvas-item-text" style="-webkit-transform: rotate({{item.turn}});transform: rotate({{item.turn}})">{{item.award}}</view>
+					</view>
+				</view>
+
+				
+			</view>
+
+			<view bindtap="getLottery" class="canvas-btn {{btnDisabled}}">抽奖</view>		
+		</view>
+```
+wxss中
+```
+/* 转盘 */
+.canvas-container ul,
+.canvas-container li{
+  margin: 0 ;
+  padding: 0;
+  list-style: none;
+}
+
+.canvas-container{
+  margin: 0 auto;
+  position: relative;
+  width: 300px;
+  height: 300px;  
+  border-radius: 50%;
+  /*border: 2px solid #E44025;*/
+  box-shadow: 0 2px 3px #333,
+              0 0 2px #000;
+}
+.canvas-content{
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  display: block;
+  width: 300px;
+  height: 300px;
+  border-radius: inherit;
+  background-clip: padding-box;
+  background-color: #ffcb3f;
+}
+.canvas-element{
+  position: relative;
+  z-index: 1;
+  width: inherit;
+  height: inherit;
+  border-radius: 50%;
+}
+.canvas-list{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: inherit;
+  height: inherit;
+  z-index: 9999;
+}
+.canvas-item{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  color: #e4370e;
+  font-weight: bold;
+  text-shadow: 0 1px 1px rgba(255,255,255,.6);
+}
+.canvas-item-text{
+  position: relative;
+  display: block;
+  padding-top: 20px;
+  /* width: 50px; */
+  margin: 0 auto;
+  text-align: center; 
+  -webkit-transform-origin: 50% 150px; 
+  transform-origin: 50% 150px;
+}
+
+/* 分隔线 */
+.canvas-line{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: inherit;
+  height: inherit;
+  z-index: 99;
+}
+.canvas-litem{
+  position: absolute;
+   left: 150px;
+   top: 0;
+   width: 1px;
+   height: 150px;
+   background-color: rgba(228,55,14,.4);
+   overflow: hidden; 
+   -webkit-transform-origin: 50% 150px; 
+   transform-origin: 50% 150px;
+}
+
+
+.canvas-btn{
+  position: absolute;
+  left: 110px;
+  top: 110px;
+  z-index: 400;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  color: #F4E9CC;
+  background-color: #E44025;
+  line-height: 80px;
+  text-align: center;
+  font-size: 20px;
+  text-shadow: 0 -1px 1px rgba(0,0,0,.6);
+  box-shadow: 0 3px 5px rgba(0,0,0,.6);
+  text-decoration: none;
+}
+.canvas-btn::after{
+  position: absolute;
+  display: block;
+  content: ' ';
+  left: 10px;
+  top: -46px;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  border-width: 30px;
+  border-style: solid;
+  border-color: transparent;
+  border-bottom-color: #E44025; 
+}
+.canvas-btn.disabled{
+    pointer-events: none;
+    background: #B07A7B;
+    color: #ccc;
+}
+.canvas-btn.disabled::after{
+  border-bottom-color: #B07A7B;
+}
+```
+js中
+```
+  data: {
+    awardsList: {},
+    animationData: {},
+    btnDisabled: ''
+  },
+  getLottery: function () {
+    var that = this
+    var awardIndex = Math.random() * 6 >>> 0;
+
+    // 获取奖品配置
+    var awardsConfig = app.awardsConfig,
+        runNum = 8
+    if (awardIndex < 2) awardsConfig.chance = false
+    console.log(awardIndex)
+
+    // 初始化 rotate
+  /*  var animationInit = wx.createAnimation({
+      duration: 10
+    })
+    this.animationInit = animationInit;
+    animationInit.rotate(0).step()
+    this.setData({
+      animationData: animationInit.export(),
+      btnDisabled: 'disabled'
+    })*/
+
+    // 旋转抽奖
+    app.runDegs = app.runDegs || 0
+    console.log('deg', app.runDegs)
+    app.runDegs = app.runDegs + (360 - app.runDegs % 360) + (360 * runNum - awardIndex * (360 / 6))
+    console.log('deg', app.runDegs)
+
+    var animationRun = wx.createAnimation({
+      duration: 4000,
+      timingFunction: 'ease'
+    })
+    that.animationRun = animationRun
+    animationRun.rotate(app.runDegs).step()
+    that.setData({
+      animationData: animationRun.export(),
+      btnDisabled: 'disabled'
+    })
+
+     // 记录奖品
+    var winAwards = wx.getStorageSync('winAwards') || {data:[]}
+    winAwards.data.push(awardsConfig.awards[awardIndex].name + '1个')
+    wx.setStorageSync('winAwards', winAwards)
+
+    // 中奖提示
+    setTimeout(function() {
+      wx.showModal({
+        title: '恭喜',
+        content: '获得' + (awardsConfig.awards[awardIndex].name),
+        showCancel: false
+      })
+      if (awardsConfig.chance) {
+        that.setData({
+          btnDisabled: ''
+        })  
+      }
+    }, 4000);
+    
+
+    /*wx.request({
+      url: '../../data/getLottery.json',
+      data: {},
+      header: {
+          'Content-Type': 'application/json'
+      },
+      success: function(data) {
+        console.log(data)
+      },
+      fail: function(error) {
+        console.log(error)
+        wx.showModal({
+          title: '抱歉',
+          content: '网络异常，请重试',
+          showCancel: false
+        })
+      }
+    })*/
+  },
+  onReady: function (e) {
+
+    var that = this;
+
+    // getAwardsConfig
+    app.awardsConfig = {
+      chance: true,
+      awards:[
+        {'index': 0, 'name': '1元红包'},
+        {'index': 1, 'name': '5元话费'},
+        {'index': 2, 'name': '6元红包'},
+        {'index': 3, 'name': '8元红包'},
+        {'index': 4, 'name': '10元话费'},
+        {'index': 5, 'name': '10元红包'}
+      ]
+    }
+    
+    // wx.setStorageSync('awardsConfig', JSON.stringify(awardsConfig))
+    
+
+    // 绘制转盘
+    var awardsConfig = app.awardsConfig.awards,
+        len = awardsConfig.length,
+        rotateDeg = 360 / len / 2 + 90,
+        html = [],
+        turnNum = 1 / len  // 文字旋转 turn 值
+    that.setData({
+      btnDisabled: app.awardsConfig.chance ? '' : 'disabled'  
+    })
+    var ctx = wx.createContext()
+    for (var i = 0; i < len; i++) {
+      // 保存当前状态
+      ctx.save();
+      // 开始一条新路径
+      ctx.beginPath();
+      // 位移到圆心，下面需要围绕圆心旋转
+      ctx.translate(150, 150);
+      // 从(0, 0)坐标开始定义一条新的子路径
+      ctx.moveTo(0, 0);
+      // 旋转弧度,需将角度转换为弧度,使用 degrees * Math.PI/180 公式进行计算。
+      ctx.rotate((360 / len * i - rotateDeg) * Math.PI/180);
+      // 绘制圆弧
+      ctx.arc(0, 0, 150, 0,  2 * Math.PI / len, false);
+
+      // 颜色间隔
+      if (i % 2 == 0) {
+          ctx.setFillStyle('rgba(255,184,32,.1)');
+      }else{
+          ctx.setFillStyle('rgba(255,203,63,.1)');
+      }
+
+      // 填充扇形
+      ctx.fill();
+      // 绘制边框
+      ctx.setLineWidth(0.5);
+      ctx.setStrokeStyle('rgba(228,55,14,.1)');
+      ctx.stroke();
+
+      // 恢复前一个状态
+      ctx.restore();
+
+      // 奖项列表
+      html.push({turn: i * turnNum + 'turn', lineTurn: i * turnNum + turnNum / 2 + 'turn', award: awardsConfig[i].name});    
+    }
+    that.setData({
+        awardsList: html
+      });
+
+    // 对 canvas 支持度太差，换种方式实现
+    /*wx.drawCanvas({
+      canvasId: 'lotteryCanvas',
+      actions: ctx.getActions()
+    })*/
+  }
+```
+
+## 多张图片横向排列单行
+wxml中
+```
+<view class="section section_gap">
+  <view class="section__title">三亚热拍</view>
+  <scroll-view class="scroll-view_H" scroll-x="true">
+    <view class="scroll-view-item_H" wx:for="{{hotList}}" wx:key="{{item}}" data-pic="{{item.pic}}"
+    data-title="{{item.title}}" data-area="{{item.area}}" data-day="{{item.day}}" data-avatar="{{item.avatar}}"
+    data-name="{{item.name}}" data-fee="{{item.fee}}"  data-experience="{{item.experience}}" bindtap="yuyue">
+      <image src="{{item.pic}}"class="scroll-image"/>
+      <view class="content">
+      <view  class="title" >{{item.title}}</view>
+      <view class="scroll-view-item-AT">
+        <view class="area">{{item.area}}</view>
+        <view class="day">{{item.day}}</view>
+      </view>
+      <view class="scroll-view-item-cf">
+        <view class="camerist_avatar"><image src="{{item.avatar}}"></image></view>
+        <view class="camerist_name">{{item.name}}</view>
+        <view class="fee">{{item.fee}}</view>
+      </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>
+```
+wxss中
+```
+.section{
+  width: 100%;
+  height: 580rpx;
+}
+.section__title{
+  padding-top: 12rpx;
+  width:100%;
+  height:80rpx;
+  line-height:80rpx;
+  position: relative;
+  text-align: center;
+  font-size: 50rpx;
+  color:#A9A9A9;
+  font-weight: bold;
+}
+.section__title::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12rpx;
+  background:#FFEFDB;
+}
+.scroll-view_H{
+  height:500rpx;
+  white-space: nowrap;
+  display: flex;
+
+}
+.scroll-view-item_H{
+  width:340rpx;
+  height:500rpx;
+  margin-right: 24rpx;
+  display: inline-block;
+
+}
+.scroll-image{
+  width:340rpx;
+  height:300rpx;
+  display: block;
+}
+.scroll-view-item_H .content{
+  width: 338rpx;
+  height: 190rpx;
+  border: 1rpx solid #FFEFDB;
+}
+.title{
+  margin-top: 20rpx;
+  height:40rpx;
+  line-height:40rpx;
+  font-size: 30rpx;
+  text-align: center;
+  font-weight: 400;
+  color:#A8A8A8;
+}
+.scroll-view-item-AT{
+  margin-top: 20rpx;
+  width: 100%;
+  height: 40rpx;
+  font-size: 11px;
+  color:#A8A8A8;
+
+}
+.area{
+  float: left;
+  width: 60rpx;
+  height: 30rpx;
+  line-height: 30rpx;
+}
+.day{
+  float:left;
+  width: 60rpx;
+  height: 30rpx;
+  line-height: 30rpx;
+}
+.scroll-view-item-cf{
+  width: 100%;
+  height: 50rpx;
+  line-height: 50rpx;
+  font-size: 26rpx;
+  color:#A8A8A8;
+}
+.camerist_avatar{
+  float: left;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+.camerist_avatar image{
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+.camerist_name{
+  float: left;
+  margin-left: 20rpx;
+  width: 50rpx;
+  height: 50rpx;
+  line-height: 50rpx;
+  vertical-align: middle;
+  font-size: 28rpx;
+
+}
+.fee{
+  float: right;
+  width: 100rpx;
+  height: 50rpx;
+  line-height: 50rpx;
+  font-size: 28rpx;
+}
+```
+js中
+```
+    hotList:[
+      {
+        pic:"http://www.lemontreevip.com/upload/201512/201512191450513761.jpg",
+        title:"春风十里不如你",
+        area:"三亚",
+        day:"1day",
+        avatar:"http://img3.imgtn.bdimg.com/it/u=4293197616,2435113501&fm=23&gp=0.jpg",
+        name:"南若北",
+        fee:"3000",
+        experience:'7年'
+      },
+      {
+        pic:"http://www.lemontreevip.com/upload/201512/201512191450512739.jpg",
+        title:"一场没有终点的旅行",
+        area:"三亚",
+        day:"1day",
+        avatar:"http://img.qq745.com/uploads/allimg/170413/14-1F413113106-53.png",
+        name:"苏晓",
+        fee:"4000",
+        experience:'10年以上'
+      },
+      {
+        pic:"http://www.lemontreevip.com/upload/201603/1458298749772440744000.jpg",
+        title:"恋上彩虹的梦",
+        area:"三亚",
+        day:"1day",
+        avatar:"http://img.qq745.com/uploads/allimg/170413/14-1F413113108-52.png",
+        name:"峰方",
+        fee:"3500",
+        experience:'10年'
+      },
+      {
+        pic:"http://www.lemontreevip.com/upload/201512/201512101449733988.jpg",
+        title:"日暮三亚",
+        area:"三亚",
+        day:"1day",
+        avatar:"http://img.qq745.com/uploads/allimg/170413/14-1F413113109-52.png",
+        name:"大鹏",
+        fee:"2500",
+        experience:'7年'
+      },
+      {
+        pic:"http://www.lemontreevip.com/upload/201508/1438966134523121267000.jpg",
+        title:"帆船高尔夫",
+        area:"三亚",
+        day:"1day",
+        avatar:"http://img.qq745.com/uploads/allimg/170413/14-1F413113111-50.png",
+        name:"一方",
+        fee:"2500",
+        experience:'7年'
+      },
+      {
+        pic:"http://www.lemontreevip.com/upload/201603/201603181458295704.jpg",
+        title:"西岛恋曲",
+        area:"三亚",
+        day:"1day",
+        avatar:"http://img.qq745.com/uploads/allimg/150307/1-15030G54010.jpg",
+        name:"大浦",
+        fee:"1800",
+        experience:'5年'
+      }
+    ],
 ```
